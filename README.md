@@ -2,6 +2,8 @@
 
 A React.js application that serves as a wrapper for Google Cloud Text-to-Speech API. This application allows users to convert text to speech using Google's powerful neural network models.
 
+https://speech-synth-app.vercel.app/
+
 ## Features
 
 - Save Google Cloud API key in browser cookies
