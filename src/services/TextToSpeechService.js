@@ -18,46 +18,56 @@ class TextToSpeechService {
     }
 
     try {
+      // Check if the selected voice is a Chirp HD voice
+      const isChirpHDVoice = preferences.voice && preferences.voice.includes('Chirp-HD');
+
+      // Prepare request body
+      const requestBody = {
+        input: {
+          text: text
+        },
+        voice: {
+          languageCode: preferences.language || 'en-US',
+          name: preferences.voice || 'en-US-Standard-A',
+          ssmlGender: 'NEUTRAL'
+        },
+        audioConfig: {
+          audioEncoding: 'MP3'
+        }
+      };
+
+      // Add pitch and speaking rate only for non-Chirp HD voices
+      if (!isChirpHDVoice) {
+        requestBody.audioConfig.pitch = preferences.pitch || 0;
+        requestBody.audioConfig.speakingRate = preferences.speakingRate || 1;
+      }
+
       const response = await axios.post(
         `${this.baseUrl}/text:synthesize?key=${apiKey}`,
-        {
-          input: {
-            text: text
-          },
-          voice: {
-            languageCode: preferences.language || 'en-US',
-            name: preferences.voice || 'en-US-Standard-A',
-            ssmlGender: 'NEUTRAL'
-          },
-          audioConfig: {
-            audioEncoding: 'MP3',
-            pitch: preferences.pitch || 0,
-            speakingRate: preferences.speakingRate || 1
-          }
-        }
+        requestBody
       );
 
       // The API returns audio content as a base64 encoded string
       const audioContent = response.data.audioContent;
-      
+
       // Convert base64 to a Blob
       const byteCharacters = atob(audioContent);
       const byteNumbers = new Array(byteCharacters.length);
-      
+
       for (let i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
-      
+
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: 'audio/mp3' });
-      
+
       // Create a URL for the blob
       const audioUrl = URL.createObjectURL(blob);
-      
+
       return audioUrl;
     } catch (error) {
       console.error('Error synthesizing speech:', error);
-      
+
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx

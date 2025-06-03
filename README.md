@@ -6,10 +6,17 @@ A React.js application that serves as a wrapper for Google Cloud Text-to-Speech 
 
 - Save Google Cloud API key in browser cookies
 - Customize speech synthesis preferences (language, voice, pitch, speaking rate)
+- Support for Standard, Wavenet, and Chirp HD voices
 - Input text directly or upload markdown (.md) files
 - Preview markdown content before synthesis
 - Play synthesized speech in the browser
 - Download synthesized speech as MP3 files
+
+### Chirp HD Voices
+
+Chirp 3: HD voices are driven by technology that captures nuances in human intonation, making conversations more engaging. These voices are available in 8 distinct styles across many languages, suitable for both real-time and standard applications.
+
+**Note:** Chirp HD voices are powered by LLMs and can hallucinate by dropping words or digits during synthesis. They don't support SSML input, speaking rate, pitch adjustments, or A-Law audio encoding.
 
 
 ## Prerequisites

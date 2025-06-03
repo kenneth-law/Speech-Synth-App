@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Button } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,6 +23,7 @@ function App() {
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSelectors, setShowSelectors] = useState(false);
 
   const handleApiKeyChange = (key) => {
     setApiKey(key);
@@ -67,24 +68,51 @@ function App() {
         </Container>
       </Navbar>
 
-      <Container className="mt-4">
-        <Row>
-          <Col md={4}>
-            <ApiKeyManager onApiKeyChange={handleApiKeyChange} />
-            <SpeechPreferences onPreferencesChange={handlePreferencesChange} />
+      <Container className="mt-5">
+        <Row className="mb-4">
+          <Col>
+            <h1 className="display-5 fw-bold">Text-to-Speech Converter</h1>
+            <p className="lead">Convert your text to natural-sounding speech using Google's advanced neural network models.</p>
           </Col>
-          <Col md={8}>
+        </Row>
+
+        <Row className="word-processor-container">
+          <Col lg={showSelectors ? 8 : 12} className="word-processor-editor">
+            <div className="word-processor-header">
+              <h3>Text Editor</h3>
+              <Button
+                variant="outline-secondary"
+                onClick={() => setShowSelectors(!showSelectors)}
+                className="toggle-selectors-btn"
+              >
+                {showSelectors ? 'Hide Options' : 'Show Options'}
+              </Button>
+            </div>
             <TextInput onTextSubmit={handleTextSubmit} />
-            <AudioPlayer 
-              audioUrl={audioUrl} 
-              loading={loading} 
-              error={error} 
+          </Col>
+
+          {showSelectors && (
+            <Col lg={4} className="word-processor-selectors">
+              <SpeechPreferences 
+                onPreferencesChange={handlePreferencesChange}
+                onApiKeyChange={handleApiKeyChange}
+              />
+            </Col>
+          )}
+        </Row>
+
+        <Row>
+          <Col>
+            <AudioPlayer
+              audioUrl={audioUrl}
+              loading={loading}
+              error={error}
             />
           </Col>
         </Row>
       </Container>
 
-      <footer className="bg-light text-center text-muted py-3 mt-5">
+      <footer className="text-center mt-5">
         <Container>
           <p>Google Speech Synthesizer - A React.js wrapper for Google Cloud Text-to-Speech API</p>
         </Container>
