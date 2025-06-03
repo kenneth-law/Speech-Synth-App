@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 
-const ApiKeyManager = ({ onApiKeyChange }) => {
+const ApiKeyManager = ({ onApiKeyChange, showForm, onToggleForm }) => {
   const [apiKey, setApiKey] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertVariant, setAlertVariant] = useState('success');
@@ -19,7 +19,7 @@ const ApiKeyManager = ({ onApiKeyChange }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!apiKey.trim()) {
       setAlertVariant('danger');
       setAlertMessage('Please enter a valid API key');
@@ -29,15 +29,20 @@ const ApiKeyManager = ({ onApiKeyChange }) => {
 
     // Save API key to cookies
     Cookies.set('googleApiKey', apiKey, { expires: 30 }); // Expires in 30 days
-    
+
     // Notify parent component
     onApiKeyChange(apiKey);
-    
+
     // Show success message
     setAlertVariant('success');
     setAlertMessage('API key saved successfully');
     setShowAlert(true);
-    
+
+    // Hide form after saving
+    if (onToggleForm) {
+      onToggleForm(false);
+    }
+
     // Hide alert after 3 seconds
     setTimeout(() => {
       setShowAlert(false);
@@ -52,23 +57,32 @@ const ApiKeyManager = ({ onApiKeyChange }) => {
           {alertMessage}
         </Alert>
       )}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Enter your Google Cloud API Key</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter API key"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-          />
-          <Form.Text className="text-muted">
-            Your API key is stored locally in your browser cookies.
-          </Form.Text>
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Save API Key
-        </Button>
-      </Form>
+      {showForm ? (
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Enter your Google Cloud API Key</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter API key"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+            <Form.Text className="text-muted">
+              Your API key is stored locally in your browser cookies.
+            </Form.Text>
+          </Form.Group>
+          <Button variant="primary" type="submit">
+            Save API Key
+          </Button>
+        </Form>
+      ) : (
+        <div className="d-flex align-items-center">
+          <span className="me-2">API key is saved</span>
+          <Button variant="outline-secondary" size="sm" onClick={() => onToggleForm(true)}>
+            Change API Key
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

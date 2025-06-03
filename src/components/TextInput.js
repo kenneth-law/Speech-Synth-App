@@ -19,7 +19,7 @@ const TextInput = ({ onTextSubmit }) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     setError('');
-    
+
     if (selectedFile) {
       // Check if file is markdown
       if (!selectedFile.name.endsWith('.md')) {
@@ -27,7 +27,7 @@ const TextInput = ({ onTextSubmit }) => {
         setFile(null);
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setFileContent(event.target.result);
@@ -43,9 +43,9 @@ const TextInput = ({ onTextSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     let contentToSubmit = '';
-    
+
     if (activeTab === 'direct') {
       if (!text.trim()) {
         setError('Please enter some text');
@@ -59,7 +59,7 @@ const TextInput = ({ onTextSubmit }) => {
       }
       contentToSubmit = fileContent;
     }
-    
+
     if (onTextSubmit) {
       onTextSubmit(contentToSubmit);
     }
@@ -80,7 +80,7 @@ const TextInput = ({ onTextSubmit }) => {
             {error}
           </Alert>
         )}
-        
+
         <Tabs
           activeKey={activeTab}
           onSelect={(k) => setActiveTab(k)}
@@ -98,17 +98,7 @@ const TextInput = ({ onTextSubmit }) => {
                   placeholder="Type or paste your text here..."
                 />
               </Form.Group>
-              
-              {text && (
-                <Button 
-                  variant="outline-secondary" 
-                  className="mb-3"
-                  onClick={togglePreview}
-                >
-                  {showPreview ? 'Hide Preview' : 'Show Preview'}
-                </Button>
-              )}
-              
+
               {showPreview && text && (
                 <Card className="mb-3">
                   <Card.Header>Preview</Card.Header>
@@ -117,13 +107,24 @@ const TextInput = ({ onTextSubmit }) => {
                   </Card.Body>
                 </Card>
               )}
-              
-              <Button variant="primary" type="submit">
-                Synthesize Speech
-              </Button>
+
+              <div className="d-flex justify-content-between align-items-center">
+                {text && (
+                  <Button
+                    variant="outline-secondary"
+                    onClick={togglePreview}
+                  >
+                    {showPreview ? 'Hide Preview' : 'Show Preview'}
+                  </Button>
+                )}
+
+                <Button variant="primary" type="submit" className={text ? "ms-auto" : ""}>
+                  Synthesize Speech
+                </Button>
+              </div>
             </Form>
           </Tab>
-          
+
           <Tab eventKey="file" title="File Upload">
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
@@ -137,17 +138,7 @@ const TextInput = ({ onTextSubmit }) => {
                   Only .md files are supported
                 </Form.Text>
               </Form.Group>
-              
-              {fileContent && (
-                <Button 
-                  variant="outline-secondary" 
-                  className="mb-3"
-                  onClick={togglePreview}
-                >
-                  {showPreview ? 'Hide Preview' : 'Show Preview'}
-                </Button>
-              )}
-              
+
               {showPreview && fileContent && (
                 <Card className="mb-3">
                   <Card.Header>Preview</Card.Header>
@@ -156,14 +147,26 @@ const TextInput = ({ onTextSubmit }) => {
                   </Card.Body>
                 </Card>
               )}
-              
-              <Button 
-                variant="primary" 
-                type="submit" 
-                disabled={!fileContent}
-              >
-                Synthesize Speech
-              </Button>
+
+              <div className="d-flex justify-content-between align-items-center">
+                {fileContent && (
+                  <Button
+                    variant="outline-secondary"
+                    onClick={togglePreview}
+                  >
+                    {showPreview ? 'Hide Preview' : 'Show Preview'}
+                  </Button>
+                )}
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={!fileContent}
+                  className={fileContent ? "ms-auto" : ""}
+                >
+                  Synthesize Speech
+                </Button>
+              </div>
             </Form>
           </Tab>
         </Tabs>
